@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #a script that displays the content of the current directory
 for _ in [echo *]
-dio
+do
    echo ""
    cut -d "-" -f 2
 done

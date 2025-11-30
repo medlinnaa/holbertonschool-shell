@@ -1,3 +1,18 @@
 #!/usr/bin/env bash
-# kills the 7-highlander process for real
-pkill -KILL 7-highlander
+#kills any process running 7-highlander
+
+for pid_dir in /proc/[0-9]*; do
+    cmdline_file="$pid_dir/cmdline"
+
+    # skip if we can't read cmdline
+    [ -r "$cmdline_file" ] || continue
+
+    # read cmdline (it's NUL-separated, turn NULs into spaces)
+    cmd=$(tr '\0' ' ' < "$cmdline_file")
+
+    case "$cmd" in
+        *7-highlander*)
+            kill -9 "$(basename "$pid_dir")"
+            ;;
+    esac
+done

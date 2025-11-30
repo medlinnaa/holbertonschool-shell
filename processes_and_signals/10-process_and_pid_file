@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
-#creates a PID file, prints a message forever, and reacts to signals
+#creates a PID file, prints forever, and reacts to signals
 
 PIDFILE="/var/run/myscript.pid"
 
-#write our PID to the file
+#1) create the pid file with our PID
 echo "$$" > "$PIDFILE"
 
-#clean EXIT handler (in case of normal exit)
-cleanup() {
-    rm -f "$PIDFILE"
-}
-trap cleanup EXIT
+#2) signal handlers
 
 #SIGTERM: print message, delete pid file, terminate
 handle_term() {
@@ -19,22 +15,22 @@ handle_term() {
     exit 0
 }
 
+#SIGINT (Ctrl+C): print message, do NOT exit
+handle_int() {
+    echo "Y U no love me?!"
+}
+
 #SIGQUIT: delete pid file, terminate (no extra message required)
 handle_quit() {
     rm -f "$PIDFILE"
     exit 0
 }
 
-#SIGINT (Ctrl+C): just print message, keep running
-handle_int() {
-    echo "Y U no love me?!"
-}
-
 trap handle_term SIGTERM
-trap handle_quit SIGQUIT
 trap handle_int SIGINT
+trap handle_quit SIGQUIT
 
-#main loop
+#3) main loop
 while true
 do
     echo "To infinity and beyond"

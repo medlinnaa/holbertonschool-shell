@@ -3,10 +3,8 @@
 
 PIDFILE="/var/run/myscript.pid"
 
-#1) create the pid file with our PID
+# create the PID file containing this script's PID
 echo "$$" > "$PIDFILE"
-
-#2) signal handlers
 
 #SIGTERM: print message, delete pid file, terminate
 handle_term() {
@@ -15,12 +13,12 @@ handle_term() {
     exit 0
 }
 
-#SIGINT (Ctrl+C): print message, do NOT exit
+#SIGINT (Ctrl+C): print message, keep running
 handle_int() {
     echo "Y U no love me?!"
 }
 
-#SIGQUIT: delete pid file, terminate (no extra message required)
+#SIGQUIT: delete pid file, terminate
 handle_quit() {
     rm -f "$PIDFILE"
     exit 0
@@ -30,7 +28,7 @@ trap handle_term SIGTERM
 trap handle_int SIGINT
 trap handle_quit SIGQUIT
 
-#3) main loop
+# main infinite loop
 while true
 do
     echo "To infinity and beyond"
